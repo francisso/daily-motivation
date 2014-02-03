@@ -34,8 +34,40 @@
         android:text="@string/text_size_text"
         android:layout_above="@+id/text_size_field"
         android:layout_alignStart="@+id/text_size_field"
-        android:layout_marginBottom="4dp"
+        android:layout_marginBottom="4sp"
         android:labelFor="@id/text_size_field" android:id="@+id/textView"/>
+    <TextView
+            android:id="@+id/choose_font_color_text"
+            android:text="Choose text color"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/text_size_field"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_marginBottom="4sp"
+            />
+    <TextView
+            android:id="@+id/choose_background_text"
+            android:text="Choose background color"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/choose_font_color_text"
+            android:layout_below="@+id/text_size_field"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_marginLeft="25sp"
+            />
+
+    <com.larswerkman.holocolorpicker.ColorPicker
+            android:id="@+id/picker_text_color"
+            android:layout_width="160sp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/choose_font_color_text"/>
+    <com.larswerkman.holocolorpicker.ColorPicker
+            android:id="@+id/picker_back_color"
+            android:layout_width="160sp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/choose_background_text"
+            android:layout_toRightOf="@id/picker_text_color"/>
+
     <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -44,6 +76,7 @@
             android:layout_alignParentBottom="true" android:layout_alignParentEnd="true"
             android:layout_marginRight="29dp" android:layout_marginBottom="40dp"
             android:onClick="save"/>
+
 
 </RelativeLayout>
 

@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import com.larswerkman.holocolorpicker.ColorPicker;
 
 
 public class Settings extends Activity {
@@ -29,6 +30,7 @@ public class Settings extends Activity {
         bar.setProgress(DEFAULT_TEXT_SIZE);
         editText.setText("" + DEFAULT_TEXT_SIZE);
 
+        //TODO: Слушатели слишком длинные, для помещения всех в один метод
         bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
@@ -74,21 +76,30 @@ public class Settings extends Activity {
         });
     }
 
-    public void save(View v) {
+    public void save(View view) {
+        //Выгрузка параметров для передачи виджету
         int textSize = ((SeekBar) findViewById(R.id.text_size_bar)).getProgress();
-        Intent update = new Intent(getApplicationContext(), WidgetProvider.class);
+        int backColor = ((ColorPicker) findViewById(R.id.picker_back_color)).getColor();
+        int textColor = ((ColorPicker) findViewById(R.id.picker_text_color)).getColor();
+        int mAppWidgetId = 0;
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
-        int mAppWidgetId = 0;
         if (extras != null) {
             mAppWidgetId = extras.getInt(
                     AppWidgetManager.EXTRA_APPWIDGET_ID,
                     AppWidgetManager.INVALID_APPWIDGET_ID);
         }
+
+        //Создание намерения для передачи настроек
+        Intent update = new Intent(getApplicationContext(), WidgetProvider.class);
         update.setAction("WIDGET_CONFIGURED");
         update.putExtra("text_size", textSize);
         update.putExtra("widget_id", mAppWidgetId);
+        update.putExtra("back_color", backColor);
+        update.putExtra("text_color", textColor);
         getApplicationContext().sendBroadcast(update);
+
+        //Необходимо для завершения первичной конфигурации
         Intent resultValue = new Intent();
         resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
         setResult(RESULT_OK, resultValue);

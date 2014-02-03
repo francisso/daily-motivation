@@ -3,18 +3,12 @@ package com.novikov.motivation;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.util.TypedValue;
 import android.widget.RemoteViews;
 
-/**
- * Created with IntelliJ IDEA.
- * User: Ilia
- * Date: 31.01.14
- */
 public class WidgetProvider extends AppWidgetProvider {
     public static final String TAG = "daily_motivation";
 
@@ -24,18 +18,34 @@ public class WidgetProvider extends AppWidgetProvider {
         super.onReceive(context, intent);
         if ("WIDGET_CONFIGURED".equals(intent.getAction())) {
             Log.d(TAG, "One widget update called");
-            int widgetId = intent.getIntExtra("widget_id", 0);
-            int textSize = intent.getIntExtra("text_size", 20);
-            updateIt(context, widgetId, textSize);
+            updateIt(context, intent);
         }
     }
 
-    private void updateIt(Context context, int widgetId, int textSize) {
+    /**
+     * Обновление виджета событием "WIDGET_CONFIGURED",
+     * пришедшим из меню настроек     *
+     *
+     * @param context
+     * @param updateIntent Намерение, при получении "WIDGET_CONFIGURED"
+     */
+    private void updateIt(Context context, Intent updateIntent) {
+        //Получение настроек
+        int widgetId = updateIntent.getIntExtra("widget_id", 0);
+        int textSize = updateIntent.getIntExtra("text_size", 20);
+        int backColor = updateIntent.getIntExtra("back_color", 0);
+        int textColor = updateIntent.getIntExtra("text_color", 0);
+
+        //Создание намерения для запуска страницы настроек
         Intent intent = new Intent(context, Settings.class);
         intent.setAction("LAUNCH_SETTINGS" + widgetId);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+
+        //Обновление виджета
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
         views.setTextViewTextSize(R.id.large_text_id, TypedValue.COMPLEX_UNIT_DIP, textSize);
+        views.setInt(R.id.background, "setBackgroundColor", backColor);
+        views.setTextColor(R.id.large_text_id, textColor);
         views.setOnClickPendingIntent(R.id.settings_icon, pendingIntent);
         AppWidgetManager.getInstance(context).updateAppWidget(widgetId, views);
     }
@@ -52,28 +62,5 @@ public class WidgetProvider extends AppWidgetProvider {
             manager.updateAppWidget(id, views);
         }
         Log.d(TAG, "Widgets were updated");
-    }
-
-    public void forceUpdate(Context context) {
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-        int[] appWidgetIds =
-                appWidgetManager.getAppWidgetIds(new ComponentName(context, this.getClass()));
-        onUpdate(context, appWidgetManager, appWidgetIds);
-    }
-
-
-    @Override
-    public void onEnabled(Context context) {
-        Log.d(TAG, "First widget was created");
-    }
-
-    @Override
-    public void onDisabled(Context context) {
-        Log.d(TAG, "Last widget was deleted");
-    }
-
-    @Override
-    public void onDeleted(Context context, int[] ids) {
-        Log.d(TAG, "Widget was deleted");
     }
 }
